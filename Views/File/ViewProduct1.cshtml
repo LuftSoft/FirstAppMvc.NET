@@ -1,0 +1,15 @@
+@model ASP.NETMVC.Models.ProductModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Product detail";
+    var product = ViewData["product"] as ProductModel;
+}
+
+
+<div class="card bg-danger text-light">
+    <h1 class="card-header">@product.Name</h1>
+    <div class="card-body">
+        <p class="card-text">ID: @product.ID</p>
+        <p class="card-text">Price: @product.Price</p>
+    </div>
+</div>
