@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using ASP.NETMVC.Services;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +11,9 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Http;
+using ASP.NETMVC.ExtendMethod;
+using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace ASP.NETMVC
 {
@@ -37,6 +41,8 @@ namespace ASP.NETMVC
                 options.ViewLocationFormats.Add("/MyView/{1}/{0}" + RazorViewEngine.ViewExtension);
             });
             services.AddSingleton<ProductService>();
+            services.AddSingleton<PlanetService>();
+            services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,6 +61,8 @@ namespace ASP.NETMVC
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.AddStatusCode(); //Tùy biển response using ASP.NETMVC.ExtendMethod;
+
             app.UseRouting();
 
             app.UseAuthentication(); //Xac định danh tính
@@ -63,8 +71,43 @@ namespace ASP.NETMVC
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
+                    name: "xemsp",
+                    pattern: "{url}/{id?}",
+                    defaults: new
+                    {
+                        controller = "File",
+                        action = "ViewProduct"
+                    },
+                    constraints: new
+                    {
+                        url = new RegexRouteConstraint(@"^((xemsanpham)|(viewproduct))$"),
+                        //hoặc url = "xemsanpham"
+                        id = new RangeRouteConstraint(1, 3)
+                    });
+                endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapAreaControllerRoute(
+                    name: "product",
+                    pattern: "/{controller}/{action=Index}/{id?}",
+                    areaName: "ProductManage"
+                );
+                endpoints.MapRazorPages();
+
+                //URL = start-here
+                //controller
+                //action 
+                //area
+                // endpoints.MapControllerRoute(
+                //     name: "firstroute",
+                //     pattern: "start-here/{id}",
+                //     defaults: new
+                //     {
+                //         controller = "File",
+                //         action = "ViewProduct",
+                //         id = 3
+                //     }
+                //     );
             });
         }
     }

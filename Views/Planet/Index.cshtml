@@ -1,0 +1,16 @@
+@inject ASP.NETMVC.Services.PlanetService planService
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Hành tinh trong hệ mặt trời";
+}
+
+<h1>Các hành tinh trong hệ mặt trời</h1>
+<div class="list-group">
+    @foreach (var planet in planService)
+    {
+        <a asp-action="Planet_detail" asp-controller="Planet" asp-route-name="@planet.Name"
+        class="list-group-item list-group-item-action">
+            @planet.VNName - @planet.Name
+        </a>
+    }
+</div>

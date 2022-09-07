@@ -1,0 +1,12 @@
+@model ASP.NETMVC.Models.PlanetModel
+<h1>@Model.Name</h1>
+<div class="card w-50">
+    <h5 class="card-header">@Model.VNName</h5>
+    <img src="~/Planet/@(Model.Name).jpg" alt="planet-img" class="card-img-top">
+    <div class="card-body">
+        <div class="card-text">@Model.Content</div>
+        <div class="card-footer">
+            <a asp-controller="Planet" asp-action="Index" class="card-link">Các hành tinh</a>
+        </div>
+    </div>
+</div>
