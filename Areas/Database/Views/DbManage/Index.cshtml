@@ -1,0 +1,54 @@
+@using Microsoft.EntityFrameworkCore
+@using System.Data
+@inject ASP.NETMVC.Models.AppDbContext dbContext
+@{
+    ViewData["Title"] = "Thông tin database";
+    var connect = dbContext.Database.GetDbConnection();
+    var dbName = connect.Database;
+    var can_connect = dbContext.Database.CanConnect();
+
+    var migrations = dbContext.Database.GetPendingMigrations();
+}
+<partial name="_AlertMessage" />
+<h1>Thông tin về cơ sở dữ liệu</h1>
+<h2>Tên database: @dbName</h2>
+<h2>Can connect: @can_connect</h2>
+<hr>
+<h2>Migrations</h2>
+<ul class="list-group">
+    @foreach (var item in dbContext.Database.GetAppliedMigrations())
+    {
+        <li class="list-group-item">@item (applied)</li>
+    }
+</ul>
+<ul class="list-control">
+    @foreach (var item in dbContext.Database.GetPendingMigrations())
+    {
+        <li class="list-group-item">@item (pedding)</li>
+    }
+    <hr>
+    @if (dbContext.Database.GetPendingMigrations().Count() > 0)
+    {
+        <form method="post">
+            <button type="submit" class="btn btn-success" asp-action="Migrate">Tạo db bằng migations</button>
+        </form>
+    }
+</ul>
+@if (!can_connect)
+{
+    <h2 class="alert alert-danger">DbContext không có khả năng kết nối đến cơ sở dữ liệu</h2>
+}
+@if (can_connect)
+{
+    dbContext.Database.OpenConnection();
+    <h2>Danh sách các table</h2>
+    var table = dbContext.Database.GetDbConnection().GetSchema("Tables");
+    <ul class="list-group">
+        @foreach (System.Data.DataRow item in table.Rows)
+        {
+            <li class="list-group-item">@item["TABLE_NAME"]</li>
+        }
+    </ul>
+}
+<hr>
+<a class="btn btn-danger" asp-action="DeleteDb">Xóa database</a>

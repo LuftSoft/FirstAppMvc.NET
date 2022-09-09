@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1006/1006363.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <title>Studying with me</title>
+    <style>
+        * {
+            font-family: 'Orbitron', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        #cover_background {
+            width: 100%;
+            height: 100vh;
+            display: block;
+            position: relative;
+        }
+
+        .text_title {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #B53471;
+            font-size: 3rem;
+        }
+
+        .f_5_rem {
+            font-size: 5rem;
+        }
+
+        .main_content_item {
+            width: 120px;
+            margin: 0 15px;
+            padding: 25px 0;
+            color: #B53471;
+            font-weight: 500;
+            border-radius: 10%;
+            text-align: center;
+            background-color: aquamarine;
+        }
+
+        .main_contain {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .main_contain_content {
+            display: flex;
+        }
+
+        .countdown_btn {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            width: 200px;
+            padding: 15px 30px;
+            font-size: 2rem;
+            cursor: pointer;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            margin: 0 10px;
+            font-weight: 500;
+        }
+
+        .btn-start {
+            background-color: #1dd1a1;
+        }
+
+        .btn-reset {
+            background-color: #ff9f43;
+        }
+
+        .main_contain_select {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        #select_time {
+            font-size: 1.5rem;
+            padding: 10px 30px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            overflow: hidden;
+            background-color: #c8d6e5;
+        }
+
+        .main_contain_select--title {
+            color: azure;
+            font-size: 1.5rem;
+            margin-right: 20px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/b3be1dae-3caa-4d45-be6c-3de586ba95e2/dehlgqx-a63b35ef-9416-4945-ba88-c5ec17a900da.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2IzYmUxZGFlLTNjYWEtNGQ0NS1iZTZjLTNkZTU4NmJhOTVlMlwvZGVobGdxeC1hNjNiMzVlZi05NDE2LTQ5NDUtYmE4OC1jNWVjMTdhOTAwZGEuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.bwsF2CMLTTp-XncsysnZUXmqXqGyPeKhB9FEL9I0DwA"
+        alt="" id="cover_background">
+    <h1 class="text_title">STUDYING WITH ME</h1>
+    <div class="main_contain">
+        <div class="main_contain_select">
+            <span class="main_contain_select--title">Edit time :</span>
+            <select name="" id="select_time" onchange="timer_change()"></select>
+        </div>
+        <div class="main_contain_content">
+            <div class="main_content_item f_5_rem" id="b_minute">3</div>
+            <div class="main_content_item f_5_rem" id="s_minute">0</div>
+            <div class="f_5_rem" style="padding:25px 0 ;color:aliceblue;">:</div>
+            <div class="main_content_item f_5_rem" id="b_second">0</div>
+            <div class="main_content_item f_5_rem" id="s_second">0</div>
+        </div>
+        <div class="countdown_btn">
+            <button class="btn btn-start" onclick="start_count()">START</button>
+            <button class="btn btn-reset" onclick="reset_count()">RESET</button>
+        </div>
+    </div>
+    <audio src="./wwwroot/music/Ws3sosarZ8yJ.128.mp3" controls></audio>
+</body>
+<script>
+    //append child cho select
+    for (let i = 1; i < 100; i++) {
+        let opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = i + " Minutes"
+        if (i < 10) { opt.textContent = "0" + i + " Minutes" }
+        if (i == 30) opt.selected = true
+        document.querySelector("#select_time").appendChild(opt);
+    }
+    const countdown = () => {
+        //console.log("count down")
+        let time = Math.floor(currentTime / 1000)
+        let min = Math.floor(time / 60)
+        let sec = time - (Math.floor(time / 60) * 60)
+        b_minute.textContent = Math.floor(min / 10)
+        s_minute.textContent = min - Math.floor(min / 10) * 10
+        b_second.textContent = Math.floor(sec / 10)
+        s_second.textContent = sec - (Math.floor(sec / 10) * 10)
+        currentTime = currentTime - 1000
+        if (currentTime < 0) clearInterval(interVal);
+    }
+    var interVal;
+    //set thoi gian
+    var totalTime = 1800000;
+    var currentTime = totalTime - 1000;
+    //-1:chua start , 0: tam dung, 1:chay
+    var start = -1
+    var b_minute = document.querySelector("#b_minute");
+    var s_minute = document.querySelector("#s_minute");
+    var b_second = document.querySelector("#b_second");
+    var s_second = document.querySelector("#s_second");
+    //bắt đầu đếm ngược
+    function start_count() {
+        if (start == 1) {
+            start = 0;
+            clearInterval(interVal)
+            document.querySelector(".btn-start").textContent = "START"
+            document.querySelector(".btn-reset").disabled = false
+            return;
+        }
+        start = 1;
+        document.querySelector(".btn-reset").disabled = true
+        document.querySelector(".btn-start").textContent = "STOP"
+        interVal = setInterval(countdown, 1000)
+    }
+    //cài lại thời gian đếm ngược
+    function reset_count() {
+        start = -1
+        currentTime = totalTime - 1000
+        let time = Math.floor(totalTime / 60000)
+        b_minute.textContent = Math.floor(time / 10)
+        s_minute.textContent = time % 10
+        b_second.textContent = 0
+        s_second.textContent = 0
+    }
+    //thay đổi tổng thời gian đếm ngược
+    function timer_change() {
+        if (start == -1) {
+            totalTime = Number(document.querySelector("#select_time").value) * 60 * 1000
+            currentTime = totalTime - 1000
+            let time = Number(document.querySelector("#select_time").value)
+            b_minute.textContent = Math.floor(time / 10)
+            s_minute.textContent = time % 10
+            b_second.textContent = 0
+            s_second.textContent = 0
+        }
+        totalTime = Number(document.querySelector("#select_time").value) * 60 * 1000
+    }
+    document.getElementsByTagName("audio").item(1).autoplay = true
+</script>
+
+</html>
