@@ -1,9 +1,20 @@
-<div class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService services
+
+@{
+    var rel = await services.AuthorizeAsync(this.User, "ViewManageMenu");
+}
+@if (rel.Succeeded)
+{
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
         aria-haspopup="true" aria-expanded="false">
-        Manage
-    </button>
-    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <a class="dropdown-item" asp-area="Database" asp-controller="DbManage" asp-action="Index">Database</a>
+            Manage
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" asp-area="Database" asp-controller="DbManage" asp-action="Index">Database</a>
+            <a class="dropdown-item" asp-area="Identity" asp-controller="Role" asp-action="Index">Role Manager</a>
+            <a class="dropdown-item" asp-area="Identity" asp-controller="User" asp-action="Index">User Manager</a>
+        </div>
     </div>
-</div>
+}

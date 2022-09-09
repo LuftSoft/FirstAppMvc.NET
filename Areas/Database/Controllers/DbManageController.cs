@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using App.Data;
 using ASP.NETMVC.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,13 +14,17 @@ namespace ASP.NETMVC.Areas.Database.Controllers
     [Route("database-manage/[action]")]
     public class DbManageController : Controller
     {
+        private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         //Để xóa db  phải inject vào dịch vụ AppDb
         [TempData]
         public string StatusMessage { set; get; }
         private readonly AppDbContext _context;
-        public DbManageController(AppDbContext context)
+        public DbManageController(AppDbContext context, UserManager<AppUser> user, RoleManager<IdentityRole> role)
         {
             _context = context;
+            _userManager = user;
+            _roleManager = role;
         }
         public IActionResult Index()
         {
@@ -41,6 +47,41 @@ namespace ASP.NETMVC.Areas.Database.Controllers
         {
             await _context.Database.MigrateAsync();
             StatusMessage = "Đã tạo database thành công!";
+            return RedirectToAction(nameof(Index));
+        }
+        [HttpPost]
+        public async Task<IActionResult> SeedDataAsync()
+        {
+
+            var roleNames = typeof(RoleName).GetFields().ToList();
+            foreach (var role in roleNames)
+            {
+                string rolename = (string)role.GetRawConstantValue();
+                //Console.WriteLine($"role name {rolename}");
+                var rfound = await _roleManager.FindByNameAsync(rolename);
+                if (rfound == null)
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(rolename));
+                    Console.WriteLine("Tao role thanh cong" + rolename);
+                }
+            }
+            //admin - admin@example.com - pass: admin123 - mailconfirm = true
+            var useradmin = await _userManager.FindByEmailAsync("admin");
+
+            if (useradmin == null)
+            {
+                AppUser user = new AppUser()
+                {
+                    UserName = "admin",
+                    Email = "admin@example.com",
+                    EmailConfirmed = true
+                };
+                await _userManager.CreateAsync(user, "admin123");
+                // Console.WriteLine("Tao user thanh cong" + user.UserName);
+                await _userManager.AddToRoleAsync(user, RoleName.Administrator);
+            }
+            //await _context.Database.MigrateAsync();
+            StatusMessage = "Đã tạo admin user thành công!";
             return RedirectToAction(nameof(Index));
         }
     }

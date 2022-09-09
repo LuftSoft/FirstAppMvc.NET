@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Routing.Constraints;
 using ASP.NETMVC.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using App.Services;
+using App.Data;
 
 namespace ASP.NETMVC
 {
@@ -34,6 +36,11 @@ namespace ASP.NETMVC
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Dang ky dich vu email
+            services.AddOptions();
+            var mailSetting = Configuration.GetSection("MailSettings");
+            services.Configure<MailSettings>(mailSetting);
+            services.AddSingleton<IEmailSender, SendMailService>();
             services.AddControllersWithViews();
             //{0} ten Action
             //{1} ten Controller
@@ -95,21 +102,32 @@ namespace ASP.NETMVC
                     .AddGoogle(options =>
                     {
                         var gconfig = Configuration.GetSection("Authentication:Google");
-                        options.ClientId = gconfig["ClientId"];
-                        options.ClientSecret = gconfig["ClientSecret"];
+                        options.ClientId = gconfig["ClientID"];
+                        options.ClientSecret = gconfig["ClientSecrect"];
                         // https://localhost:5001/signin-google
                         options.CallbackPath = "/dang-nhap-tu-google";
                     })
                     .AddFacebook(options =>
                     {
                         var fconfig = Configuration.GetSection("Authentication:Facebook");
-                        options.AppId = fconfig["AppId"];
-                        options.AppSecret = fconfig["AppSecret"];
+                        options.AppId = fconfig["AppID"];
+                        options.AppSecret = fconfig["AppSecrect"];
                         options.CallbackPath = "/dang-nhap-tu-facebook";
                     })
                     // .AddTwitter()
                     // .AddMicrosoftAccount()
                     ;
+            //error
+            services.AddSingleton<IdentityErrorDescriber, AppIdentityErrorDescriber>();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ViewManageMenu", builder =>
+                {
+                    builder.RequireAuthenticatedUser();
+                    builder.RequireRole(RoleName.Administrator);
+                });
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
