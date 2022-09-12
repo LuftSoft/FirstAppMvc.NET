@@ -1,0 +1,64 @@
+@model IEnumerable<ASP.NETMVC.Models.Blog.Category>
+
+@{
+    ViewData["Title"] = "Chuyên mục blog";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a asp-action="Create">Tạo mục mới</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Slug)
+            </th>
+            @* <th>
+                @Html.DisplayNameFor(model => model.ParentCategory.Title)
+                </th> *@
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @* Muốn xem chi tiết nội dung phải vào mục chi tiết(detail) *@
+        @foreach (var item in Model)
+        {
+            await RenderItem(item, 0);
+        }
+    </tbody>
+</table>
+
+@{
+    async Task RenderItem(Category item, int level)
+    {
+        string prefix = string.Concat(Enumerable.Repeat("&nbsp;&nbsp;&nbsp", level));
+        <tr>
+            <td>
+                @* @Html.DisplayFor(modelItem => item.Title) *@
+                @Html.Raw(prefix) <a asp-action="Edit" asp-route-id="@item.Id">(@level) @item.Title</a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Slug)
+            </td>
+            @* <td>
+                @Html.DisplayFor(modelItem => item.ParentCategory.Title)
+                </td> *@
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Chi tiết</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Xóa</a>
+            </td>
+        </tr>
+        if (item.CategoryChildren?.Count > 0)
+        {
+            foreach (var cCate in item.CategoryChildren)
+            {
+                await RenderItem(cCate, level + 1);
+            }
+        }
+    }
+}

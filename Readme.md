@@ -154,3 +154,13 @@ dotnet aspnet-codegenerator area <Tên Area>
 **Ví dụ**
 - **[Simple Logging EntityFramework Core](https://docs.microsoft.com/en-us/ef/core/logging-events-diagnostics/simple-logging)**
 - appseting.json
+## Xây dựng website blog đầu tiên
+- Tạo table category
+## Một số tips
+- string.Concat(Enumerable.Repeat("&nbsp;&nbsp;&nbsp", level));
+- @Html.Raw(prefix) <a asp-action="Edit" asp-route-id="@item.Id">(@level) @item.Title</a>
+## Tích hợp trình soạn thảo vào HTML
+- Một số trình soạn thảo phổ biến như
+```
+CkEditor, Summernote, TinyMCE ...
+```

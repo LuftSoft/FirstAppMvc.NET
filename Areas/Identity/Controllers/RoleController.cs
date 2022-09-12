@@ -21,7 +21,7 @@ using Microsoft.Extensions.Logging;
 namespace App.Areas.Identity.Controllers
 {
 
-    //[Authorize(Roles = RoleName.Administrator)]
+    [Authorize(Roles = RoleName.Administrator)]
     [Area("Identity")]
     [Route("/Role/[action]")]
     public class RoleController : Controller

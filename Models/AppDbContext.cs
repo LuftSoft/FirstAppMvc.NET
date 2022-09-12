@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ASP.NETMVC.Models.Blog;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,7 @@ namespace ASP.NETMVC.Models
 {
     public class AppDbContext : IdentityDbContext<AppUser>
     {
+        public DbSet<Category> _categories { set; get; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
             // Phương thức khởi tạo này chứa options để kết nối đến MS SQL Server
@@ -29,6 +31,11 @@ namespace ASP.NETMVC.Models
                     item.SetTableName(tableName.Substring(6));
                 }
             }
+            //fluence API
+            builder.Entity<Category>(entity =>
+            {
+                entity.HasIndex(c => c.Slug);
+            });
         }
     }
 }
