@@ -34,8 +34,18 @@ namespace ASP.NETMVC.Models
             //fluence API
             builder.Entity<Category>(entity =>
             {
-                entity.HasIndex(c => c.Slug);
+                entity.HasIndex(c => c.Slug).IsUnique();
+            });
+            builder.Entity<PostCategory>(entity =>
+            {
+                entity.HasKey(c => new { c.PostID, c.CategoryID });
+            });
+            builder.Entity<Post>(entity =>
+            {
+                entity.HasIndex(c => c.Slug).IsUnique();
             });
         }
+        public DbSet<ASP.NETMVC.Models.Blog.Post> Post { get; set; }
+        public DbSet<ASP.NETMVC.Models.Blog.PostCategory> PostCategory { get; set; }
     }
 }
