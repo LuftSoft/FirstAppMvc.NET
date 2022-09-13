@@ -41,6 +41,29 @@ namespace ASP.NETMVC.Models.Blog
 
 
         public Category ParentCategory { set; get; }
-
+        public void ChildCategories(List<int> list, ICollection<Category> childCates = null)
+        {
+            if (childCates == null)
+            {
+                childCates = this.CategoryChildren;
+            }
+            foreach (var cate in childCates)
+            {
+                list.Add(cate.Id);
+                ChildCategories(list, cate.CategoryChildren);
+            }
+        }
+        public List<Category> ListParents()
+        {
+            List<Category> li = new List<Category>();
+            var parent = this.ParentCategory;
+            while (parent != null)
+            {
+                li.Add(parent);
+                parent = parent.ParentCategory;
+            }
+            li.Reverse();
+            return li;
+        }
     }
 }

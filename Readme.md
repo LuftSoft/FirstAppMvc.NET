@@ -164,3 +164,6 @@ dotnet aspnet-codegenerator area <Tên Area>
 ```
 CkEditor, Summernote, TinyMCE ...
 ```
+## Kĩ thuật layout lồng nhau
+    Tạo 1 layout khác sau đấy inject layout hiện tại vào layout mới này
+## Phân trang, breakcrumb

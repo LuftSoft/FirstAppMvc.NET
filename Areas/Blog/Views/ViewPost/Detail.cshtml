@@ -1,0 +1,46 @@
+@model Post
+@using ASP.NETMVC.Components
+@{
+    var list_cate = ViewBag.categories;
+    var category = ViewBag.category;
+    ViewData["Title"] = Model.Title;
+}
+<nav class="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="~/">Home</a></li>
+        @if (category != null)
+        {
+            var li = category.ListParents();
+            @foreach (var l in li)
+            {
+                <li class="breadcrumb-item">
+                    <a asp-controller="ViewPost" asp-area="Blog" asp-action="Detail"
+                asp-route-categoryslug="@l.Slug">@l.Title</a>
+                </li>
+            }
+            <li class="breadcrumb-item">
+                <a asp-controller="ViewPost" asp-area="Blog" asp-action="Detail"
+                asp-route-categoryslug="@category.Slug">@category.Title</a>
+            </li>
+        }
+    </ol>
+</nav>
+<div class="detailpost">
+    <h1>@Model.Title</h1>
+    <div class="sapo">
+        @Html.Raw(Model.Description)
+    </div>
+    <div>
+        <i>Cập nhật: @Model.DateUpdated.ToShortDateString()</i>
+        Tác giả: <strong>@Model.Author.UserName</strong>
+    </div>
+    <hr>
+    @Html.Raw(Model.Content)
+</div>
+@section sidebar{
+@await Component.InvokeAsync("ASP.NETMVC.Components.CategorySidebar", new CategorySidebar.CategorySidebarData(){
+Categories = list_cate,
+categorySlug = category.Slug,
+level = 0
+});
+}
