@@ -1,4 +1,4 @@
-
+## libman, gulp, code generator, ef migrations
 ## Trong controller có thể truy cập các phương thức sau như trong PageModel
 - this.User;
 - this.TempData;
@@ -167,3 +167,12 @@ CkEditor, Summernote, TinyMCE ...
 ## Kĩ thuật layout lồng nhau
     Tạo 1 layout khác sau đấy inject layout hiện tại vào layout mới này
 ## Phân trang, breakcrumb
+## SE Linux, CENTOS
+## elFinder : Hỗ trợ upload file, hình ảnh lên web
+    Dành cho phía client
+    Cần cung cấp các client server API
+    IWebHostEnvironment
+    _env.ContentRootPath
+- Chèn elfinder vào summer note
+## Lưu các mật khẩu nhạy cảm(Safety storage)
+- https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-3.1&tabs=windows#secret-manager

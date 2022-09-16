@@ -22,6 +22,7 @@ namespace ASP.NETMVC.Models
                 ['fontsize', ['fontsize']],
                 ['color', ['color']],
                 ['para', ['ul', 'ol', 'paragraph']],
+                ['insert',['link','picture','video','elfinder']],
                 ['height', ['height']]
             ]
         ";

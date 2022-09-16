@@ -19,6 +19,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using App.Services;
 using App.Data;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace ASP.NETMVC
 {
@@ -50,7 +52,6 @@ namespace ASP.NETMVC
             {
                 options.ViewLocationFormats.Add("/MyView/{1}/{0}" + RazorViewEngine.ViewExtension);
             });
-            services.AddSingleton<ProductService>();
             services.AddSingleton<PlanetService>();
             services.AddRazorPages();
             services.AddDbContext<AppDbContext>(options =>
@@ -145,6 +146,13 @@ namespace ASP.NETMVC
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(Directory.GetCurrentDirectory(), "elFinderUploads")
+                ),
+                RequestPath = "/contents"
+            });
 
             app.AddStatusCode(); //Tùy biển response using ASP.NETMVC.ExtendMethod;
 

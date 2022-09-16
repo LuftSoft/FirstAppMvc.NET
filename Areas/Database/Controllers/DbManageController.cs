@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using App.Data;
 using ASP.NETMVC.Models;
 using ASP.NETMVC.Models.Blog;
+using ASP.NETMVC.Models.Product;
 using Bogus;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -83,6 +84,7 @@ namespace ASP.NETMVC.Areas.Database.Controllers
                 await _userManager.AddToRoleAsync(user, RoleName.Administrator);
             }
             SeedPostCategory();
+            SeedProductCategory();
             //await _context.Database.MigrateAsync();
             StatusMessage = "Đã tạo admin user thành công!";
             return RedirectToAction(nameof(Index));
@@ -91,7 +93,10 @@ namespace ASP.NETMVC.Areas.Database.Controllers
         {
             _context._categories.RemoveRange(_context._categories.Where(c => c.Description.Contains("[fakeData]")));
             _context.Post.RemoveRange(_context.Post.Where(p => p.Content.Contains("[fakeData]")));
-            _context.Post.RemoveRange(_context.Post.Where(p => p.Content.Contains("[fakeData]")));
+            _context.SaveChanges();
+
+
+            //tạo fake data
             var fakeCategory = new Faker<Category>();
             int cm = 1;
             fakeCategory.RuleFor(c => c.Title, fk => $"CM{cm++} " + fk.Lorem.Sentence(1, 2).Trim('.'));
@@ -142,6 +147,72 @@ namespace ASP.NETMVC.Areas.Database.Controllers
                 );
             }
             _context.AddRange(posts);
+            _context.AddRange(list_categories);
+            //END
+
+            _context.SaveChanges();
+        }
+
+        //seed product 
+        private void SeedProductCategory()
+        {
+            _context.Products.RemoveRange(_context.Products.Where(c => c.Content.Contains("[fakeData]")));
+            _context.CategoryProducts.RemoveRange(_context.CategoryProducts.Where(p => p.Description.Contains("[fakeData]")));
+            _context.SaveChanges();
+            //_context.Post.RemoveRange(_context.Post.Where(p => p.Content.Contains("[fakeData]")));
+
+
+            var fakeCategory = new Faker<CategoryProduct>();
+            int cm = 1;
+            fakeCategory.RuleFor(c => c.Title, fk => $"Nhóm sản phẩm {cm++} " + fk.Lorem.Sentence(1, 2).Trim('.'));
+            fakeCategory.RuleFor(c => c.Description, fk => fk.Lorem.Sentence(5) + "[fakeData]");
+            fakeCategory.RuleFor(c => c.Slug, fk => fk.Lorem.Slug());
+
+            var cate1 = fakeCategory.Generate();
+            var cate11 = fakeCategory.Generate();
+            var cate12 = fakeCategory.Generate();
+            var cate2 = fakeCategory.Generate();
+            var cate21 = fakeCategory.Generate();
+            var cate22 = fakeCategory.Generate();
+
+
+            cate11.ParentCategory = cate1;
+            cate12.ParentCategory = cate1;
+            cate21.ParentCategory = cate2;
+            cate22.ParentCategory = cate2;
+
+            var categories = new CategoryProduct[] { cate1, cate11, cate12, cate2, cate21, cate22 };
+            _context.CategoryProducts.AddRange(categories);
+            //START
+            var rCateIndex = new Random();
+            int bv = 1;
+
+            var user = _userManager.GetUserAsync(this.User).Result;
+            var fakeProduct = new Faker<ProductModel>();
+            fakeProduct.RuleFor(p => p.AuthorId, f => user.Id);
+            fakeProduct.RuleFor(p => p.Content, f => f.Commerce.ProductDescription() + "[fakeData]");
+            fakeProduct.RuleFor(p => p.DateCreated, f => f.Date.Between(new DateTime(2011, 1, 1), new DateTime(2022, 9, 10)));
+            fakeProduct.RuleFor(p => p.Description, f => f.Lorem.Sentence(3));
+            fakeProduct.RuleFor(p => p.Slug, f => f.Lorem.Slug());
+            fakeProduct.RuleFor(p => p.Title, f => $"Sản phẩm {bv++} " + f.Commerce.ProductName());
+            fakeProduct.RuleFor(p => p.Price, f => int.Parse(f.Commerce.Price(10000, 500000000, 0)));
+
+            List<ProductModel> procs = new List<ProductModel>();
+            List<ProductCategoryProduct> list_categories = new List<ProductCategoryProduct>();
+            for (int i = 1; i <= 40; i++)
+            {
+                var proc = fakeProduct.Generate();
+                proc.DateUpdated = proc.DateCreated;
+                procs.Add(proc);
+                list_categories.Add(
+                    new ProductCategoryProduct()
+                    {
+                        Product = proc,
+                        Category = categories[rCateIndex.Next(5)]
+                    }
+                );
+            }
+            _context.AddRange(procs);
             _context.AddRange(list_categories);
             //END
 

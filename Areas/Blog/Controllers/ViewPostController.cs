@@ -73,7 +73,7 @@ namespace ASP.NETMVC.Areas.Blog.Controllers
                 })
 
             };
-            
+
             ViewBag.Category = category;
             ViewBag.categories = categories;
             ViewBag.cSlug = categoryslug;
@@ -87,18 +87,23 @@ namespace ASP.NETMVC.Areas.Blog.Controllers
         }
         [Route("/post/{postslug}.html")]
         public IActionResult Detail(string postslug)
-        {   
+        {
             var categories = GetCategory();
             ViewBag.categories = categories;
 
-            var _post = _context.Post.Where(p=>p.Slug == postslug)
-                                        .Include(p=>p.Author)
-                                        .Include(p=>p.PostCategories)
-                                        .ThenInclude(pc=>pc.Category)
+            var _post = _context.Post.Where(p => p.Slug == postslug)
+                                        .Include(p => p.Author)
+                                        .Include(p => p.PostCategories)
+                                        .ThenInclude(pc => pc.Category)
                                         .FirstOrDefault();
-            if(_post == null) return NotFound("Không tìm thấy bài viết");
+            if (_post == null) return NotFound("Không tìm thấy bài viết");
             Category category = _post.PostCategories.FirstOrDefault()?.Category;
             ViewBag.category = category;
+            var relativePost = _context.Post.Where(p => p.PostCategories.Any(c => c.CategoryID == category.Id))
+                                                .Where(p => p.PostId != _post.PostId)
+                                                .OrderByDescending(p => p.DateUpdated)
+                                                .Take(5);
+            ViewBag.relativePost = relativePost.ToList();
             return View(_post);
         }
 
